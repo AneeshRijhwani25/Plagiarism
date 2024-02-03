@@ -18,7 +18,7 @@ def extract_text_from_pdf(pdf_path):
         print(f"Error extracting text from PDF: {e}")
     return text
 
-def check_plagiarism_api(api_key, text1, text2):
+def check_plagiarism_api(api_key, text1):
     url = "https://plagiarism-checker-and-auto-citation-generator-multi-lingual.p.rapidapi.com/plagiarism"
 
     payload = {
@@ -136,16 +136,14 @@ def grade_submission(api_key, teacher_answer_path, student_answer_path):
 
     student_answer = extract_text_from_pdf(student_answer_path)
 
-    plagiarism_percentage = check_plagiarism_api(api_key, teacher_answer, student_answer)
+    plagiarism_percentage = check_plagiarism_api(api_key, student_answer)
 
     if plagiarism_percentage is not None:
         print(f"Plagiarism Percentage: {plagiarism_percentage}%")
 
-        context_match_threshold = 80
         context_similarity = compare_text_similarity(teacher_answer, student_answer)
         print(f"Context Similarity: {context_similarity}%")
 
-        # Calculate the combined score
         combined_score = calculate_combined_score(plagiarism_percentage, context_similarity)
         print(f"Combined Score: {combined_score}")
 
@@ -186,24 +184,19 @@ def grade_submission_route():
 
 @app.route('/plagiarism', methods=['POST'])
 def plagiarism_check_route():
-    # Get parameters from the request
     api_key = request.form.get('api_key')
-    teacher_link = request.form.get('teacher_link')
     student_link = request.form.get('student_link')
 
-    # Download PDF files from Firebase links
-    teacher_pdf_path = download_from_firebase(teacher_link)
     student_pdf_path = download_from_firebase(student_link)
 
     # Extract text from PDFs
-    teacher_text = extract_text_from_pdf(teacher_pdf_path)
     student_text = extract_text_from_pdf(student_pdf_path)
 
     # Check plagiarism for the student's answer
-    plagiarism_percentage = check_plagiarism_api(api_key, teacher_text, student_text)
+    plagiarism_percentage = check_plagiarism_api(api_key, student_text)
 
     # Clean up files
-    cleanup([teacher_pdf_path, student_pdf_path])
+    cleanup([ student_pdf_path])
 
     if plagiarism_percentage is not None:
         return jsonify({'plagiarism_percentage': plagiarism_percentage})
