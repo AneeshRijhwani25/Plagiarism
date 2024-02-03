@@ -1,7 +1,6 @@
 
 Flask 
 jsonify 
-os
 requests
 PyMuPDF
 fitz
