@@ -153,7 +153,7 @@ def grade_submission(api_key, teacher_answer_path, student_answer_path):
         final_grade = assign_grade(combined_score)
         print(f"Final Grade: {final_grade}")
 
-        return final_grade , plagiarism_percentage
+        return final_grade 
 
     else:
         print("Plagiarism check failed.")
@@ -171,7 +171,8 @@ def grade_submission_route():
     student_pdf_path = download_from_firebase(student_link)
 
     # Grade the student's submission
-    final_grade, plagiarism_percent = grade_submission(api_key, teacher_pdf_path, student_pdf_path)
+    plagiarism_percent = check_plagiarism_api(api_key, teacher_answer, student_answer)
+    final_grade = grade_submission(api_key, teacher_pdf_path, student_pdf_path)
 
     # Clean up files
     cleanup([teacher_pdf_path, student_pdf_path])
