@@ -1,0 +1,10 @@
+Flask 
+request 
+jsonify 
+od
+requests
+tempfile
+PyMuPDF
+fitz
+frontend
+difflib
