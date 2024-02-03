@@ -3,5 +3,6 @@ Flask
 jsonify 
 requests
 fitz
+frontend
 PyMuPDF
 waitress
