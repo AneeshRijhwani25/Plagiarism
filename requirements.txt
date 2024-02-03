@@ -1,9 +1,8 @@
 
 Flask 
 jsonify 
-od
+os
 requests
 PyMuPDF
 fitz
 frontend
-difflib
