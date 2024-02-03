@@ -206,12 +206,12 @@ def plagiarism_check_route():
 @app.route('/ocr', methods=['POST'])
 def ocr_extraction_route():
     ocr_api_key = request.form.get('ocr_api_key')
+    api_key = request.form.get('api_key')
     image_url = request.form.get('image_url')
-
     ocr_text = perform_ocr(image_url, ocr_api_key)
-
+    plagiarism_percentage = check_plagiarism_api(api_key, ocr_text)
     if ocr_text is not None:
-        return jsonify({'ocr_text': ocr_text})
+        return jsonify({'Plagiarism': plagiarism_percentage})
     else:
         return jsonify({'error': 'OCR extraction failed'})
 
