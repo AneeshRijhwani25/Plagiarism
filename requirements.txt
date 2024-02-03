@@ -3,9 +3,5 @@ Flask
 jsonify 
 requests
 fitz
-frontend
 PyMuPDF
-gunicorn
-typing-extensions
 waitress
-uwsgi
