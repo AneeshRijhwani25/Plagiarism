@@ -5,7 +5,7 @@ import tempfile
 import fitz
 import difflib
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 
 def extract_text_from_pdf(pdf_path):
     text = ""
