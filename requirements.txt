@@ -6,5 +6,5 @@ fitz
 frontend
 PyMuPDF
 gunicorn
-
+tools
 waitress
