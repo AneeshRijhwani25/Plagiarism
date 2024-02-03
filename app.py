@@ -171,7 +171,7 @@ def grade_submission_route():
     student_pdf_path = download_from_firebase(student_link)
 
     # Grade the student's submission
-    plagiarism_percent = check_plagiarism_api(api_key, teacher_answer, student_answer)
+    
     final_grade = grade_submission(api_key, teacher_pdf_path, student_pdf_path)
 
     # Clean up files
@@ -179,8 +179,7 @@ def grade_submission_route():
 
     if final_grade is not None:
         return jsonify({
-            'final_grade': final_grade,
-            'plagiarism' : plagiarism_percent
+            'final_grade': final_grade
             })
     else:
         return jsonify({'error': 'Grading failed'})
