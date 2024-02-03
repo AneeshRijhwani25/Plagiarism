@@ -5,7 +5,7 @@ import tempfile
 import fitz
 import difflib
 
-app = Flask(__name__, static_folder='static')
+app = Flask(__name__)
 
 def extract_text_from_pdf(pdf_path):
     text = ""
@@ -130,6 +130,35 @@ def download_from_firebase(file_link):
         print(f"Error downloading file from Firebase: {e}")
         return None
 
+def grade_submission(api_key, teacher_answer_path, student_answer_path):
+
+    teacher_answer = extract_text_from_pdf(teacher_answer_path)
+
+    student_answer = extract_text_from_pdf(student_answer_path)
+
+    plagiarism_percentage = check_plagiarism_api(api_key, teacher_answer, student_answer)
+
+    if plagiarism_percentage is not None:
+        print(f"Plagiarism Percentage: {plagiarism_percentage}%")
+
+        context_match_threshold = 80
+        context_similarity = compare_text_similarity(teacher_answer, student_answer)
+        print(f"Context Similarity: {context_similarity}%")
+
+        # Calculate the combined score
+        combined_score = calculate_combined_score(plagiarism_percentage, context_similarity)
+        print(f"Combined Score: {combined_score}")
+
+        # Assign grade based on the combined score
+        final_grade = assign_grade(combined_score)
+        print(f"Final Grade: {final_grade}")
+
+        return final_grade , plagiarism_percentage
+
+    else:
+        print("Plagiarism check failed.")
+        return None
+
 @app.route('/grade', methods=['POST'])
 def grade_submission_route():
     # Get parameters from the request
@@ -142,12 +171,18 @@ def grade_submission_route():
     student_pdf_path = download_from_firebase(student_link)
 
     # Grade the student's submission
-    grade_submission(api_key, teacher_pdf_path, student_pdf_path)
+    final_grade, plagiarism_percent = grade_submission(api_key, teacher_pdf_path, student_pdf_path)
 
     # Clean up files
     cleanup([teacher_pdf_path, student_pdf_path])
 
-    return jsonify({'message': 'Grading completed successfully'})
+    if final_grade is not None:
+        return jsonify({
+            'final_grade': final_grade,
+            'plagiarism' : plagiarism_percent
+            })
+    else:
+        return jsonify({'error': 'Grading failed'})
 
 @app.route('/plagiarism', methods=['POST'])
 def plagiarism_check_route():
@@ -175,7 +210,6 @@ def plagiarism_check_route():
     else:
         return jsonify({'error': 'Plagiarism check failed'})
 
-
 @app.route('/ocr', methods=['POST'])
 def ocr_extraction_route():
     ocr_api_key = request.form.get('ocr_api_key')
@@ -187,8 +221,6 @@ def ocr_extraction_route():
         return jsonify({'ocr_text': ocr_text})
     else:
         return jsonify({'error': 'OCR extraction failed'})
-
-
 
 def cleanup(files_to_delete):
     for file_path in files_to_delete:
