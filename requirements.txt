@@ -2,9 +2,9 @@
 Flask 
 jsonify 
 requests
-PyMuPDF
 fitz
 frontend
+PyMuPDF
 gunicorn
 typing-extensions
 waitress
