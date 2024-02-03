@@ -65,11 +65,11 @@ def calculate_combined_score(plagiarism_percentage, context_similarity):
     return combined_score
 
 def assign_grade(combined_score):
-    if combined_score >= 90:
+    if combined_score >= 80:
         return "A"
-    elif combined_score >= 80:
+    elif combined_score >= 60:
         return "B"
-    elif combined_score >= 70:
+    elif combined_score >= 35:
         return "C"
     else:
         return "F"
